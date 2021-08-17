@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>GeekShop - Каталог</title>
+    <title>{{ title }}</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -52,7 +52,7 @@
 
         <div class="col-lg-3">
 
-            <h1 class="my-4">GeekShop</h1>
+            <h1 class="my-4">{{ header }}</h1>
             <div class="list-group">
                 <a href="#" class="list-group-item">Новинки</a>
                 <a href="#" class="list-group-item">Одежда</a>
@@ -239,7 +239,7 @@
 <!-- Footer -->
 <footer class="py-5 bg-dark">
     <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; GeekShop 2020</p>
+        <p class="m-0 text-center text-white">Copyright &copy; GeekShop {% now 'j F Y' %}</p>
     </div>
     <!-- /.container -->
 </footer>
