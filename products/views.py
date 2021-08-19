@@ -12,7 +12,7 @@ def products(request):
         'header': 'GeekShop',
         'products': [
             {'name': 'Худи черного цвета с монограммами adidas Originals', 'price': 6090,
-             'description': 'Мягкая ткань для свитшотов. Стиль и комфорт – это образ жизни/',
+             'description': 'Мягкая ткань для свитшотов. Стиль и комфорт – это образ жизни.',
              'image': '/vendor/img/products/Adidas-hoodie.png'},
             {'name': 'Синяя куртка The North Face', 'price': 23725,
              'description': 'Гладкая ткань. Водонепроницаемое покрытие. Легкий и теплый пуховый наполнитель.',
