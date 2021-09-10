@@ -25,10 +25,10 @@
                             </tr>
                             </tfoot>
                             <tbody>
-                            {% for item in category %}
+                            {% for category in object_list %}
                                 <tr>
-                                    <td><a href="#" style="color: dodgerblue">{{ item.name }}</a></td>
-                                    <td>{{ product.description }}</td>
+                                    <td><a href="#" style="color: dodgerblue">{{ category.name }}</a></td>
+                                    <td>{{ category.description }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
