@@ -7,13 +7,13 @@ from products.models import Product, ProductCategory
 class IndexView(CommonContextMixin, TemplateView):
     title = 'GeekShop'
     template_name = 'products/index.html'
-    paginate_by = 3
 
 
 class ProductsListView(CommonContextMixin, ListView):
     model = Product
     template_name = 'products/products.html'
     title = 'GeekShop - Каталог'
+    paginate_by = 3
 
     def get_queryset(self):
         queryset = super(ProductsListView, self).get_queryset()
