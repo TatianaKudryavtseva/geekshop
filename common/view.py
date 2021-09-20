@@ -5,3 +5,4 @@ class CommonContextMixin:
         context = super(CommonContextMixin, self).get_context_data(**kwargs)
         context['title'] = self.title
         return context
+

@@ -1,7 +1,11 @@
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.views.generic.edit import CreateView, UpdateView
-from django.urls import reverse_lazy
+from django.core.mail import send_mail
+from django.shortcuts import render, HttpResponseRedirect, redirect
+from django.views.generic.edit import UpdateView, FormView
+from django.urls import reverse_lazy, reverse
 from common.view import CommonContextMixin
 from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
 from baskets.models import Basket
@@ -15,13 +19,46 @@ class UserLoginView(CommonContextMixin, LoginView):
     success_url = reverse_lazy('users:profile')
 
 
-class UserRegistrationView(CommonContextMixin, SuccessMessageMixin, CreateView):
+class UserRegistrationView(CommonContextMixin, SuccessMessageMixin, FormView):
     model = User
     template_name = 'users/registration.html'
     form_class = UserRegistrationForm
     success_url = reverse_lazy('users:login')
-    success_message = 'Вы успешно зарегестрировались!'
+    success_message = f'Вы успешно зарегестрировались! Письмо с подтверждением регистрации отправлено на почту'
     title = 'GeekShop - Регистрация'
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            if self.send_verify_mail(user):
+                messages.success(request, f'Вы успешно зарегестрировались! '
+                                          f'Письмо с подтверждением регистрации отправлено на почту')
+                return redirect(self.success_url)
+            return redirect(self.success_url)
+        return render(request, self.template_name, {'form': form})
+
+    def send_verify_mail(self, user):
+        verify_link = reverse('users:verify', args=[user.email, user.activation_key])
+        title = f'Подтверждение учетной записи {user.username}'
+        message = f'Для подтверждения регистрации {user.username} на сайте {settings.DOMAIN_NAME} '\
+                  f'пройдите по ссылке: \n{settings.DOMAIN_NAME}{verify_link}'
+
+        return send_mail(title, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
+
+    def verify(self, email, activation_key):
+        try:
+            user = User.objects.get(email=email)
+            if user.activation_key == activation_key and not user.is_activation_key_expired():
+                user.is_active = True
+                user.save()
+                return render(self, 'users/verification.html')
+            else:
+                print(f'error activation user: {user.username}')
+                return render(self, 'users/verification.html')
+        except Exception as err:
+            print(f'error activation user: {err.args}')
+            return HttpResponseRedirect(reverse('index'))
 
 
 class UserProfileView(CommonContextMixin, UpdateView):
@@ -41,4 +78,10 @@ class UserProfileView(CommonContextMixin, UpdateView):
 
 class UserLogoutView(LogoutView):
     template_name = 'products/index.html'
+
+
+
+
+
+
 
