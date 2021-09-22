@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
+import json
 
 from pathlib import Path
 
@@ -37,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_django',
 
     'products',
     'users',
@@ -145,15 +148,34 @@ EMAIL_HOST = 'smtp.mailtrap.io'
 EMAIL_HOST_USER = '7edd1a599c3041'
 EMAIL_HOST_PASSWORD = 'df11b70e7c90bc'
 EMAIL_PORT = '2525'
-#EMAIL_HOST = 'localhost'
-#EMAIL_PORT = '25'
-#EMAIL_HOST_USER = 'django@geekshop.local'
-#EMAIL_HOST_PASSWORD = 'geekshop'
+# EMAIL_HOST = 'localhost'
+# EMAIL_PORT = '25'
+# EMAIL_HOST_USER = 'django@geekshop.local'
+# EMAIL_HOST_PASSWORD = 'geekshop'
 EMAIL_USE_SSL = False
 
-#вариант python -m smtpd -n -c DebuggingServer localhost:25
-#EMAIL_HOST_USER, EMAIL_HOST_PASSWORD = None, None
+# вариант python -m smtpd -n -c DebuggingServer localhost:25
+# EMAIL_HOST_USER, EMAIL_HOST_PASSWORD = None, None
 
-#вариант логирования сообщений почты в виде файлов вместо отправки
-#EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-#EMAIL_FILE_PATH = 'tmp/email-messages/'
+# вариант логирования сообщений почты в виде файлов вместо отправки
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_FILE_PATH = 'tmp/email-messages/'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.vk.VKOAuth2',
+    'social_core.backends.google.GoogleOAuth2'
+)
+
+with open('geekshop/vk.json', 'r') as f:
+    VK = json.load(f)
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = VK['SOCIAL_AUTH_VK_OAUTH2_KEY']
+SOCIAL_AUTH_VK_OAUTH2_SECRET = VK['SOCIAL_AUTH_VK_OAUTH2_SECRET']
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+with open('geekshop/google.json', 'r') as g:
+    GOOGLE = json.load(g)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = GOOGLE['client_id']
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = GOOGLE['client_secret']
