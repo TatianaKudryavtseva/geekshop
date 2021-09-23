@@ -3,13 +3,15 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.mail import send_mail
+from django.db import transaction
 from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.views.generic.edit import UpdateView, FormView
 from django.urls import reverse_lazy, reverse
 from common.view import CommonContextMixin
 from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
 from baskets.models import Basket
-from users.models import User
+from users.models import User, UserProfile
+from users.forms import UserProfileEditForm
 
 
 class UserLoginView(CommonContextMixin, LoginView):
@@ -61,27 +63,41 @@ class UserRegistrationView(CommonContextMixin, SuccessMessageMixin, FormView):
             return HttpResponseRedirect(reverse('index'))
 
 
-class UserProfileView(CommonContextMixin, UpdateView):
-    model = User
-    template_name = 'users/profile.html'
-    form_class = UserProfileForm
-    title = 'GeekShop - Профиль'
+# class UserProfileView(CommonContextMixin, UpdateView):
+#    model = User
+#    template_name = 'users/profile.html'
+#    form_class = UserProfileForm
+#    title = 'GeekShop - Профиль'
+#
+#    def get_success_url(self):
+#        return reverse_lazy('users:profile', args=(self.object.id,))
+#
+#    def get_context_data(self, **kwargs):
+#        context = super(UserProfileView, self).get_context_data(**kwargs)
+#        context['baskets'] = Basket.objects.filter(user=self.object)
+#        return context
 
-    def get_success_url(self):
-        return reverse_lazy('users:profile', args=(self.object.id,))
 
-    def get_context_data(self, **kwargs):
-        context = super(UserProfileView, self).get_context_data(**kwargs)
-        context['baskets'] = Basket.objects.filter(user=self.object)
-        return context
+@transaction.atomic
+def profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(data=request.POST, files=request.FILES, instance=request.user)
+        profile_form = UserProfileEditForm(data=request.POST, instance=request.user.userprofile)
+        if form.is_valid() and profile_form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('users:profile'))
+    else:
+        form = UserProfileForm(instance=request.user)
+        profile_form = UserProfileEditForm(instance=request.user.userprofile)
+
+    context = {
+        'form': form,
+        'profile_form': profile_form,
+        'title': 'GeekShop - Профиль',
+        'baskets': Basket.objects.filter(user=request.user), }
+
+    return render(request, 'users/profile.html', context)
 
 
 class UserLogoutView(LogoutView):
     template_name = 'products/index.html'
-
-
-
-
-
-
-

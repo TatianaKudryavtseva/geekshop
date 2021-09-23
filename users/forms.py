@@ -3,7 +3,7 @@ import random
 
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
 from django import forms
-
+from users.models import UserProfile
 from users.models import User
 
 
@@ -56,7 +56,20 @@ class UserProfileForm(UserChangeForm):
         'class': 'form-control py-4', 'readonly': True}))
     email = forms.CharField(widget=forms.EmailInput(attrs={
         'class': 'form-control py-4', 'readonly': True}))
+    birthday = forms.DateField(widget=forms.DateInput(attrs={
+        'class': 'form-control py-4'}), required=False)
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'image', 'username', 'email')
+        fields = ('first_name', 'last_name', 'image', 'username', 'email', 'birthday')
+
+
+class UserProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('tagline', 'aboutMe', 'gender',)
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfileEditForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
