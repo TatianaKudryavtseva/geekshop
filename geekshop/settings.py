@@ -11,8 +11,12 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 import json
+import environ
 
 from pathlib import Path
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-s)m_v)&ca_&&5achnroy@9446fl!ca^bh*+@41(j%8#z6z=5%='
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -147,12 +151,12 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_ERROR_URL = '/'
 
-DOMAIN_NAME = 'http://localhost:8000'
+DOMAIN_NAME = env('DOMAIN_NAME')
 
-EMAIL_HOST = 'smtp.mailtrap.io'
-EMAIL_HOST_USER = '7edd1a599c3041'
-EMAIL_HOST_PASSWORD = 'df11b70e7c90bc'
-EMAIL_PORT = '2525'
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = env('EMAIL_PORT')
 # EMAIL_HOST = 'localhost'
 # EMAIL_PORT = '25'
 # EMAIL_HOST_USER = 'django@geekshop.local'
