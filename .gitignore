@@ -4,4 +4,6 @@ db.sqlite3
 media
 google.json
 vk.json
+.env
+
 
