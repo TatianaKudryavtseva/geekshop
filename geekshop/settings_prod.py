@@ -32,7 +32,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -166,10 +166,10 @@ EMAIL_PORT = env('EMAIL_PORT')
 # EMAIL_HOST_PASSWORD = 'geekshop'
 EMAIL_USE_SSL = False
 
-# вариант python -m smtpd -n -c DebuggingServer localhost:25
+# ГўГ Г°ГЁГ Г­ГІ python -m smtpd -n -c DebuggingServer localhost:25
 # EMAIL_HOST_USER, EMAIL_HOST_PASSWORD = None, None
 
-# вариант логирования сообщений почты в виде файлов вместо отправки
+# ГўГ Г°ГЁГ Г­ГІ Г«Г®ГЈГЁГ°Г®ГўГ Г­ГЁГї Г±Г®Г®ГЎГ№ГҐГ­ГЁГ© ГЇГ®Г·ГІГ» Гў ГўГЁГ¤ГҐ ГґГ Г©Г«Г®Гў ГўГ¬ГҐГ±ГІГ® Г®ГІГЇГ°Г ГўГЄГЁ
 # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 # EMAIL_FILE_PATH = 'tmp/email-messages/'
 
