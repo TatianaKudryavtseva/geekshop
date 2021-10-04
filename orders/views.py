@@ -1,6 +1,7 @@
 from django.db.models.signals import pre_save, pre_delete
 from django.dispatch import receiver
-from django.shortcuts import get_object_or_404, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.db import transaction
 from django.forms import inlineformset_factory
@@ -9,19 +10,23 @@ from django.views.generic.detail import DetailView
 from baskets.models import Basket
 from orders.models import Order, OrderItem
 from orders.forms import OrderItemForm
+from products.models import Product
+from common.view import CommonContextMixin
 
 
-class OrderList(ListView):
+class OrderList(CommonContextMixin, ListView):
     model = Order
+    title = 'Список заказов'
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
 
 
-class OrderCreate(CreateView):
+class OrderCreate(CommonContextMixin, CreateView):
     model = Order
     fields = []
     success_url = reverse_lazy('orders:orders_list')
+    title = 'Создание заказа'
 
     def get_context_data(self, **kwargs):
         data = super(OrderCreate, self).get_context_data(**kwargs)
@@ -57,11 +62,12 @@ class OrderCreate(CreateView):
         return super(OrderCreate, self).form_valid(form)
 
 
-class OrderUpdate(UpdateView):
+class OrderUpdate(CommonContextMixin, UpdateView):
     model = Order
     fields = []
     context_object_name = 'object'
     success_url = reverse_lazy('orders:orders_list')
+    title = 'Изменение заказа'
 
     def get_context_data(self, **kwargs):
         data = super(OrderUpdate, self).get_context_data(**kwargs)
@@ -89,18 +95,16 @@ class OrderUpdate(UpdateView):
         return super(OrderUpdate, self).form_valid(form)
 
 
-class OrderDelete(DeleteView):
+class OrderDelete(CommonContextMixin, DeleteView):
     model = Order
     success_url = reverse_lazy('orders:orders_list')
+    title = 'Удаление заказа'
 
 
-class OrderRead(DetailView):
+class OrderRead(CommonContextMixin, DetailView):
     model = Order
-
-    def get_context_data(self, **kwargs):
-        context = super(OrderRead, self).get_context_data(**kwargs)
-        context['title'] = 'заказ/просмотр'
-        return context
+    title = 'Просмотр заказа'
+    success_url = reverse_lazy('orders:order_read')
 
 
 def order_forming_complete(request, pk):
@@ -126,3 +130,14 @@ def product_quantity_update_save(sender, update_fields, instance, **kwargs):
 def product_quantity_update_delete(sender, instance, **kwargs):
     instance.product.quantity += instance.quantity
     instance.product.save()
+
+
+def get_product_price(request, pk):
+    if request.is_ajax():
+        product = Product.objects.filter(pk=int(pk)).first()
+        if product:
+            return JsonResponse({'price': product.price})
+        else:
+            return JsonResponse({'price': 0})
+    else:
+        return HttpResponseRedirect(reverse('index'))

@@ -34,7 +34,7 @@ class ProductAdmin(UserProfileForm):
 
     class Meta:
         model = Product
-        fields = ('name', 'image', 'description', 'price', 'quantity', 'category')
+        fields = ('name', 'image', 'description', 'price', 'quantity', 'category', 'is_active')
 
 
 class CategoryAdmin(UserProfileForm):

@@ -20,6 +20,8 @@ class Basket(models.Model):
     quantity = models.PositiveIntegerField(default=0)
     created_timestamp = models.DateTimeField(auto_now_add=True)
 
+    is_active = models.BooleanField(default=True)
+
     def __str__(self):
         return f'Корзиня для {self.user.username} | Продукт {self.product.name}'
 

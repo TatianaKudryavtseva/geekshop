@@ -2,3 +2,7 @@ Django~=3.2.6
 requests~=2.26.0
 Pillow
 django-environ
+social_auth_app_django
+sqlparse
+asgiref
+pytz
