@@ -22,6 +22,10 @@ class Basket(models.Model):
 
     is_active = models.BooleanField(default=True)
 
+    @staticmethod
+    def get_item(pk):
+        return Basket.objects.filter(pk=pk).first()
+
     def __str__(self):
         return f'Корзиня для {self.user.username} | Продукт {self.product.name}'
 
