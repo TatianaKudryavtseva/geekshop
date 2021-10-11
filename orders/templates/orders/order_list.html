@@ -7,7 +7,9 @@
             <h1 class="mt-4">Заказы</h1>
             <div class="card mb-4">
                 <div class="card-header">
-                    <i class="fas fa-table mr-1"></i>Заказы
+                    {% if user.is_not_staff %}
+                        <i class="fas fa-table mr-1"> Заказы {{ item.username }}</i>
+                    {%  endif %}
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -21,6 +23,9 @@
                                 <th></th>
                                 <th></th>
                                 <th></th>
+                                {% if user.is_staff %}
+                                    <th>Пользователь</th>
+                                {% endif %}
                             </tr>
                             </thead>
                             <tbody>
@@ -43,6 +48,9 @@
                                         <a href="{% url 'orders:order_delete' item.pk %}">удалить</a>
                                         {% endif %}
                                     </td>
+                                    {% if user.is_staff %}
+                                        <td>{{ item.user }}</td>
+                                    {% endif %}
                             {% endfor %}
                             </tbody>
                         </table>

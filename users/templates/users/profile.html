@@ -83,6 +83,8 @@
                         <label class="small mb-1" for="{{ profile_form.tagline.id_for_label }}">Тэги</label>
                         {{ profile_form.tagline }}
                     </div>
+                </div>
+                <div class="form-row">
                     <div class="col-lg-6">
                         <label class="small mb-1" for="{{ profile_form.aboutMe.id_for_label }}">Про меня</label>
                         {{ profile_form.aboutMe }}
@@ -100,6 +102,10 @@
         </div>
     </div>
     </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/basket.js' %}"></script>
 {% endblock %}
 
 

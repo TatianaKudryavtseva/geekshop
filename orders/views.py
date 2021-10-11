@@ -12,6 +12,7 @@ from orders.models import Order, OrderItem
 from orders.forms import OrderItemForm
 from products.models import Product
 from common.view import CommonContextMixin
+from django.views.decorators.cache import cache_page
 
 
 class OrderList(CommonContextMixin, ListView):
@@ -19,7 +20,10 @@ class OrderList(CommonContextMixin, ListView):
     title = 'Список заказов'
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        if self.request.user.is_staff:
+            return Order.objects.all()
+        else:
+            return Order.objects.filter(user=self.request.user)
 
 
 class OrderCreate(CommonContextMixin, CreateView):
@@ -73,7 +77,7 @@ class OrderUpdate(CommonContextMixin, UpdateView):
         data = super(OrderUpdate, self).get_context_data(**kwargs)
         OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=1)
         if self.request.POST:
-            formset = data['orderitems'] = OrderFormSet(self.request.POST, instance=self.object)
+            formset = OrderFormSet(self.request.POST, instance=self.object)
         else:
             formset = OrderFormSet(instance=self.object)
             for form in formset.forms:
@@ -86,6 +90,7 @@ class OrderUpdate(CommonContextMixin, UpdateView):
         context = self.get_context_data()
         orderitems = context['orderitems']
         with transaction.atomic():
+            form.instance.user = self.request.user
             self.object = form.save()
             if orderitems.is_valid():
                 orderitems.instance = self.object
@@ -107,6 +112,7 @@ class OrderRead(CommonContextMixin, DetailView):
     success_url = reverse_lazy('orders:order_read')
 
 
+@cache_page(3600)
 def order_forming_complete(request, pk):
     order = get_object_or_404(Order, pk=pk)
     order.status = Order.SENT_TO_PROCEED
