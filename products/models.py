@@ -22,7 +22,7 @@ class Product(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'{self.name} | {self.category.name}'
+        return f'{self.name} ({self.category.name})'
 
     @staticmethod
     def get_items():

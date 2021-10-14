@@ -12,6 +12,7 @@ from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
 from baskets.models import Basket
 from users.models import User, UserProfile
 from users.forms import UserProfileEditForm
+from django.contrib.auth.decorators import login_required
 
 
 class UserLoginView(CommonContextMixin, LoginView):
@@ -77,7 +78,7 @@ class UserRegistrationView(CommonContextMixin, SuccessMessageMixin, FormView):
 #        context['baskets'] = Basket.objects.filter(user=self.object)
 #        return context
 
-
+@login_required()
 @transaction.atomic
 def profile(request):
     if request.method == 'POST':

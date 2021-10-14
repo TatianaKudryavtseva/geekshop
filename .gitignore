@@ -3,7 +3,7 @@ __pycache__/
 db.sqlite3
 media
 google.json
-vk.json
 .env
+test_db.json
 
 
